@@ -82,6 +82,18 @@
             transform: scale(1.1);
     }
 
+        select{
+            width: calc(100% - 16px); /* Adjusted width to account for padding and border */
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;            
+        }
+
 
         th, td {
             padding: 12px 15px;
@@ -130,6 +142,23 @@
         .btn-container {
             text-align: center;
             clear: both;
+        }
+
+        #timeLabel
+        {
+            position: absolute;
+            left:70%;
+            top:73%;
+            color: white;
+            font-size: 25px;
+        }
+
+        #dateLabel{
+            position: absolute;
+            left:70%;
+            top:54%;
+            color:white;
+            font-size: 25px;
         }
     </style>
 </head>
@@ -189,7 +218,38 @@
             });
 
         });
+        function updateDateTime() {
+                var dateLabel = document.getElementById('dateLabel');
+                var timeLabel = document.getElementById('timeLabel');
+
+                var currentDateTime = new Date();
+
+                var currentDate = currentDateTime.toLocaleDateString(); // Get current date
+
+                // Get hours and minutes in 12-hour format with leading zeroes
+                var hours = currentDateTime.getHours().toString().padStart(2, '0');
+                var minutes = currentDateTime.getMinutes().toString().padStart(2, '0');
+
+                // Determine if it's AM or PM
+                var amPM = currentDateTime.getHours() >= 12 ? 'PM' : 'AM';
+
+                // Convert hours to 12-hour format
+                hours = (hours % 12) || 12;
+
+                var currentTime = hours + ':' + minutes + ' ' + amPM; // Format time as HH:MM AM/PM
+
+                dateLabel.textContent = 'Date:   ' + currentDate;
+                timeLabel.textContent = 'Time:   ' + currentTime;
+            }
+
+            // Call the function initially to set the date and time
+            updateDateTime();
+
+            // Optionally, if you want to update the date and time continuously:
+            // Update the labels every second (1000 milliseconds)
+            setInterval(updateDateTime, 1000);
     });
+    
     </script>
 </head>
 <body>
@@ -200,11 +260,13 @@
         <a href="home.html" id="home">Home</a>
         <a href="addRoom.html" id="add">Add Room</a>
         <a href="manageRoom.html" id="manageRoom">Manage Rooms</a>
-        <a href="main.html" id="logout">Logout</a>
+        <a href="login.html" id="logout">Logout</a>
     </div>
 
     <div id="appBar">
         <img src="Artboard 3.png" alt="Header Photo" style="width: 100%; height: 100%;" />
+        <label id="dateLabel"></label>
+        <label id="timeLabel"></label>
     </div>
 
     <div id="content">
@@ -214,9 +276,24 @@
 
             <input type="text" id="roomID" value="" placeholder="Add Room ID">
             <input type="text" id="roomName" value="" placeholder="Add Room Name">
-            <input type="text" id="roomStatus" value="" placeholder="Add Room Status">
-            <input type="text" id="roomType" value="" placeholder="Add Room Type">
-            <input type="text" id="roomCapacity" value="" placeholder="Add Room Capacity">
+
+            <select id="roomStatus" class="custom-select status-select">
+                <option value="" disabled selected hidden>Select Room Status</option>
+                <option value="Available">Available</option>
+                <option value="Not Available">Not Available</option>
+                <option value="Under Maintenance">Under Maintenance</option>
+            </select>
+            
+            <select id="roomType" class="custom-select type-select">
+                <option value="" disabled selected hidden>Select Room Type</option>
+                <option value="Classroom">Classroom</option>
+                <option value="Drawing Room">Drawing Room</option>
+                <option value="Laboratory">Laboratory</option>
+                <option value="Storage Room">Storage Room</option>
+            </select>
+
+            <input type="text" id="roomCapacity" value="" placeholder="Add Room Capacity (1-100)">
+
             <button id="save">Save</button>
         </div>
     </div>

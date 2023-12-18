@@ -18,12 +18,22 @@
             object-fit: cover;
             height: 100%;
             width: 60%;
+            z-index: -1;
+            filter: brightness(0.5);
+        }
+
+        #img2Background {
+            position: absolute;
+            left: 20%;
+            top: 35%;
+            height: 30%;
+            width: 15%;
         }
 
         #loginSection {
             color: #3E3E3E;
             padding: 50px;
-            background-color:#FEA001;
+            background-color:#ffffffbe;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             border-radius: 0px;
             display: flex;
@@ -35,7 +45,12 @@
         }
 
         #loginSection:hover {
-            transform: scale(1.05);
+            transform: scale(1.00);
+        }
+
+        h3{
+            position: absolute;
+            top: 20%;
         }
 
         #closeLogin {
@@ -44,13 +59,14 @@
             top: 20px;
             right: 20px;
             font-size: 24px;
-            color:#f8f8f8;
+            color:#FEA001;
         }
 
         #loginForm {
             display: flex;
             flex-direction: column;
             width: 100%;
+            height: 38%;
             max-width: 400px;
             text-align: center;
         }
@@ -73,7 +89,7 @@
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
-            border: 2px solid #FEA001;
+            border: 2px solid #215049;
             border-radius: 5px;
             box-sizing: border-box;
             transition: border-color 0.3s ease-in-out;
@@ -82,7 +98,7 @@
         }
 
         #loginForm input:hover {
-            border-color: #3E3E3E;
+            border-color: #215049;
         }
 
         #login {
@@ -98,24 +114,26 @@
         }
 
         #login:hover {
-            background-color: #fff;
-            color: #FEA001;
-            border-color: #FEA001;
+            background-color: #215049;
+            color: #fff;
+            border-color: #fff;
         }
+        
     </style>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
-    <img src="integ prog.png" id="imgBackground" alt="Background Image"> 
-
+    <img src="New Background.png" id="imgBackground" alt="Background Image">
+    <img src="logo.png" id="img2Background" alt="Background Image2">
+    
     <div id="loginSection">
         <span id="closeLogin" onclick="window.location.href = 'index.html';">&times;</span>
-        <h3>Welcome to CICT Room Checker</h3>
+        <h3>Welcome to CICT Room Checker</h3><br><br><br><br><br><br>
         <div id="loginForm">
             <label for="username">Username:</label>
             <input type="text" id="username" placeholder="Enter your username" value="user">
             <label for="password">Password:</label>
-            <input type="password" id="password" placeholder="Enter your password" value="pass">
+            <input type="password" id="password" placeholder="Enter your password" value="pass"><br>
         </div>
         <button id="login" onclick="login()">Login</button>
     </div>

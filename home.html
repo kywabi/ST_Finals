@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CICT Room Checker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: #FFFBED;
+        }
+
+        #appBar {
+            height: 200px;
+            background-color: #215049;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            left: 210px;
+        }
+
+        #logo {
+            width: 150px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #215049;
+            padding-top: 20px;
+            padding-left: 10px;
+            color: #fff;
+        }
+
+        #sidebar a {
+            padding: 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #fff;
+            display: block;
+        }
+
+        #sidebar a:hover {
+            background-color: #FEA001;
+            color: #215049;
+        }
+
+        #content {
+            margin-left: 200px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .dashboard-container {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .dashboard-tile {
+            display: inline-block;
+            width: calc(30% - 10px);
+            margin: 0 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .dashboard-tile:hover {
+            transform: scale(1.05);
+        }
+
+        .dashboard-tile:nth-child(2),
+        .dashboard-tile:nth-child(1),
+        .dashboard-tile:nth-child(3) {
+            background-color: #FEA001;
+        }
+
+        #searchRoomContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        #searchRoom {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+        }
+
+        #searchButton{
+            width: 15%;
+            background-color: #FEA001;
+            color: #000000;
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 4px; /* Add margin around the buttons */
+        }
+
+        #reloadButton {
+            background-color: #215049; 
+            color: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 4px; /* Add margin around the buttons */
+        }
+
+        #searchButton:hover {
+            background-color: #215049;
+            color: #fff;
+        }
+   
+
+        #reloadButton:hover {
+            background-color: #FEA001;
+            color: #000000;
+        }
+
+        #searchResultContainer {
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #searchResultTable {
+            background-color: #ffffff;
+            border-radius: 10px;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1px;
+        }
+
+        #searchResultTable th,
+        #searchResultTable td {
+            border-radius: 10px;
+            border: 1px solid #ffffff;
+            padding: 15px;
+            text-align: center;
+            color: #215049;
+        }
+
+        #searchResultTable th {
+            background-color: #215049;
+            color: #fff;
+        }
+
+        .highlighted-row {
+        background-color: #FFFF99;
+        }
+
+</style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <img src="logo.png" alt="Logo" id="logo" onclick="navigateToHome()">
+        <a href="home.html" id="home">Home</a>
+        <a href="addRoom.html" id="addRoom">Add Room</a>
+        <a href="manageRoom.html" id="manageRoom">Manage Rooms</a>
+        <a href="index.html" id="logout">Logout</a>
+    </div>
+
+    <div id="appBar">
+        <img src="Artboard 3.png" alt="Header Photo" style="width: 100%; height: 100%;" />
+    </div>
+
+    <div id="content">
+        <div class="dashboard-container">
+            <!-- Tiles for displaying room availability -->
+
+            <div id="time" class="dashboard-tile">
+                <h2>Time</h2>
+                <p id="datetime"></time></p>
+            </div>
+
+            <div id="availableRooms" class="dashboard-tile">
+                <h2>Available Rooms</h2>
+                <p id="availableCount">0</p>
+            </div>
+    
+            <div id="notAvailableRooms" class="dashboard-tile">
+                <h2>Not Available Rooms</h2>
+                <p id="notAvailableCount">0</p>
+            </div>
+    
+
+        </div>
+
+        <!-- Room Search Table -->
+        <div id="searchRoomContainer">
+            <input type="text" id="searchRoom" placeholder="Enter Room Name">
+            <button id="searchButton">Search</button>
+            <button id="reloadButton">Reload</button>
+        </div>
+
+
+
+        <div id="searchResultContainer">
+            <table id="searchResultTable" border="1">
+            <tr>
+                <th>Room ID</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th>Capacity</th>
+            </tr>
+        </table>
+        </div>
+        <script>
+            const firebaseConfig = {
+                apiKey: "AIzaSyAZW4f9CL-s71soVD43dUNwiErznHpnGb4",
+                authDomain: "hkkn-st-finals.firebaseapp.com",
+                projectId: "hkkn-st-finals",
+                storageBucket: "hkkn-st-finals.appspot.com",
+                messagingSenderId: "316271335533",
+                appId: "1:316271335533:web:c461bfe0b3d98033bd8764",
+                measurementId: "G-EJ59SM1W4B"
+              };
+        
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig); // Corrected initialization
+        
+            const db = firebase.database();
+            const roomsRef = db.ref("Rooms");
+        
+            // Fetch data from the database
+            roomsRef.once("value")
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    console.log(data);
+        
+                    // Display data in tiles
+                    const availableCount = calculateRoomStatus(data, "Available");
+                    const notAvailableCount = calculateRoomStatus(data, "Not Available");
+                    const maintenanceCount = calculateRoomStatus(data, "Maintenance");
+        
+                    $("#availableCount").text(availableCount);
+                    $("#notAvailableCount").text(notAvailableCount);
+                    $("#maintenanceCount").text(maintenanceCount);
+        
+                    // Display all rooms in the search table
+                    displayAllRooms(data);
+                })
+                .catch((error) => {
+                    console.log("Error:", error);
+                });
+        
+            function calculateRoomStatus(data, status) {
+                return Object.values(data).filter(room => room.roomStatus === status).length;
+            }
+        
+            const products = db.ref("Rooms");
+
+            products.once("value").then((snapshot)=>{
+
+                const data=snapshot.val();
+                console.log(data);
+
+                $.each(data, function(index, value){
+                $("#searchResultTable").append("<tr><td>"+index+"</td><td>"+value.roomName+"</td><td>"+value.roomStatus+"</td><td>"+value.roomType+"</td><td>"+value.roomCapacity+"</td></tr>");
+
+                })
+            })
+            .catch((error)=>{
+
+                console.log("Error:", error);
+            })
+        
+            $("#searchButton").on("click", function () {
+                const searchTerm = $("#searchRoom").val().toLowerCase();
+                searchRooms(searchTerm);
+            });
+        
+            function searchRooms(searchTerm) {
+                // Clear previous search results
+                $("#searchResultTable").empty();
+        
+                products.once("value").then((snapshot) => {
+                    const data = snapshot.val();
+        
+                    $.each(data, function (index, value) {
+                        // Check if the room name contains the search term
+                        if (value.roomName.toLowerCase().includes(searchTerm)) {
+                            $("#searchResultTable").append("<tr><td>" + index + "</td><td>" + value.roomName + "</td><td>" + value.roomStatus + "</td><td>" + value.roomType + "</td><td>" + value.roomCapacity + "</td></tr>");
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.log("Error:", error);
+                });
+                
+                $("#reloadButton").on("click", function () {
+                    location.reload();
+                });     
+            }
+            function updateTime() {
+                const now = new Date();
+                const options = { hour: 'numeric', minute: 'numeric'};
+                const currentTime = now.toLocaleTimeString([], options);
+                document.querySelector('#datetime').textContent = currentTime;
+            }
+
+            setInterval(updateTime, 1000);
+
+        </script>
+        
+    </body>
+</html>

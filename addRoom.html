@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CICT Room Checker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: rgba(255, 249, 237, 0.8);
+
+        }
+
+        #appBar {
+            height: 200px;
+            background-color: #215049;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            left: 210px;
+        }
+
+        #logo {
+            width: 150px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #215049; /* Dark green background color */
+            padding-top: 20px;
+            padding-left: 10px;
+            color: #fff; /* White text color */
+        }
+
+        #sidebar a {
+            padding: 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #fff; /* White text color */
+            display: block;
+        }
+
+        #sidebar a:hover {
+            background-color: #FEA001; /* Yellow background color on hover */
+            color: #215049; /* Dark green text color on hover */
+        }
+
+        #content {
+            margin-left: 200px; /* Adjusted to accommodate the sidebar width */
+            padding: 20px;
+        }
+
+        h1 {
+            color: #215049;
+            text-align: center;
+        }
+
+        .container {
+            width: 35%;
+            background-color: rgba(255, 249, 237, 0.8);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            color: #215049;
+            margin-top: 40px;
+            margin-left: auto; /* Set left margin to auto for centering */
+            margin-right: auto; /* Set right margin to auto for centering */
+            align-items: center; /* This property is not applicable to a block-level element like .container */
+
+            /* Increase size by 10% */
+            transform: scale(1.1);
+    }
+
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #215049;
+            color: #FFFFFF;
+        }
+
+        button {
+            background-color: #FFA001;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: block;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button:hover {
+            background-color: #FF7C00;
+        }
+
+        input {
+            width: calc(100% - 16px); /* Adjusted width to account for padding and border */
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        input::placeholder {
+            color: #777;
+        }
+
+        .btn-container {
+            text-align: center;
+            clear: both;
+        }
+    </style>
+</head>
+<head>
+    <title>Firebase Connection</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
+
+
+
+    <script>
+        //configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZW4f9CL-s71soVD43dUNwiErznHpnGb4",
+            authDomain: "hkkn-st-finals.firebaseapp.com",
+            projectId: "hkkn-st-finals",
+            storageBucket: "hkkn-st-finals.appspot.com",
+            messagingSenderId: "316271335533",
+            appId: "1:316271335533:web:c461bfe0b3d98033bd8764",
+            measurementId: "G-EJ59SM1W4B"
+          };
+
+          //initialize the connection
+          firebase.initializeApp(firebaseConfig);
+          const db= firebase.database();
+
+    
+          $(document).ready(function(){
+
+            $(document).ready(function(){
+
+              $("#save").click(function(){
+                  var roomID=$("#roomID").val();
+                  var roomName=$("#roomName").val();
+                  var roomStatus=$("#roomStatus").val();
+                  var roomType=$("#roomType").val();
+                  var roomCapacity=$("#roomCapacity").val();
+
+                  db.ref("Rooms/room_"+roomID).set({
+                      roomName : roomName,
+                      roomStatus: roomStatus,
+                      roomType: roomType,
+                      roomCapacity: roomCapacity
+                    })
+                  .then(() => {
+                    alert("Data uploaded successfully");
+                    location.reload();
+
+                  })
+                  .catch((error)=> {
+                    console.log("Error:", error)
+                  });
+
+            });
+
+        });
+    });
+    </script>
+</head>
+<body>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <img src="logo.png" alt="Logo" id="logo" onclick="navigateToHome()">
+        <a href="home.html" id="home">Home</a>
+        <a href="addRoom.html" id="add">Add Room</a>
+        <a href="manageRoom.html" id="manageRoom">Manage Rooms</a>
+        <a href="main.html" id="logout">Logout</a>
+    </div>
+
+    <div id="appBar">
+        <img src="Artboard 3.png" alt="Header Photo" style="width: 100%; height: 100%;" />
+    </div>
+
+    <div id="content">
+
+        <div class="container">
+            <h1> ROOM DETAILS</h1>
+
+            <input type="text" id="roomID" value="" placeholder="Add Room ID">
+            <input type="text" id="roomName" value="" placeholder="Add Room Name">
+            <input type="text" id="roomStatus" value="" placeholder="Add Room Status">
+            <input type="text" id="roomType" value="" placeholder="Add Room Type">
+            <input type="text" id="roomCapacity" value="" placeholder="Add Room Capacity">
+            <button id="save">Save</button>
+        </div>
+    </div>
+</body>
+</html>

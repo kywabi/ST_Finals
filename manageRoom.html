@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CICT Room Checker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: #FFFBED;
+        }
+
+        #appBar {
+            height: 200px;
+            background-color: #215049;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            left: 210px;
+        }
+
+        #logo {
+            width: 150px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #215049;
+            padding-top: 20px;
+            padding-left: 10px;
+            color: #fff;
+        }
+
+        #sidebar a {
+            padding: 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #fff;
+            display: block;
+        }
+
+        #sidebar a:hover {
+            background-color: #FEA001;
+            color: #215049;
+        }
+
+        #content {
+            margin-left: 200px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #215049;
+            text-align: center;
+        }
+        
+            .container {
+                width: 35%;
+                background-color: rgba(255, 249, 237, 0.8);
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                color: #215049;
+                margin-top: 20px;
+                float: right;
+            }
+        
+            .table {
+                width: 80%; /* Adjusted width to 60% */
+                max-height: 400px; /* Added max-height for scrolling */
+                overflow-y: auto; /* Added vertical scroll for overflow */
+                background-color: rgba(255, 249, 237, 0.8);
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                color: #215049;
+                margin-left: 240px;
+                float: left;
+            }
+            
+            #roomList {
+                width: 100%;
+                border-collapse: collapse;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                background-color: rgba(248, 248, 248, 0.8);
+            }
+            
+            th, td {
+                padding: 12px 15px;
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            th {
+                background-color: #215049;
+                color: #FFFFFF;
+            }
+            
+            button {
+                background-color: #FFA001;
+                color: #FFFFFF;
+                border: none;
+                padding: 10px 16px;
+                cursor: pointer;
+                border-radius: 4px;
+                display: block;
+                margin: 10px auto; /* Adjusted margin for centering */
+                width: 150px; /* Adjust the width as needed for uniformity */
+                }
+
+            button:hover {
+                background-color:#215049;   
+                }   
+        
+            .delete-btn:hover {
+                background-color: #FF3030; /* Darker red on hover */
+                }
+            input {
+                width: calc(100% - 16px); /* Adjusted width to account for padding and border */
+                padding: 8px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        
+            input::placeholder {
+                color: #777;
+            }
+        
+            .btn-container {
+                text-align: center;
+                clear: both;
+            }
+        
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <img src="logo.png" alt="Logo" id="logo" onclick="navigateToHome()">
+
+        <a href="home.html" id="home">Home</a>
+        <a href="addRoom.html" id="addRoom">Add Room</a>
+        <a href="manageRoom.html" id="manageRoom">Manage Rooms</a>
+        <a href="index.html" id="logout">Logout</a>
+    </div>
+
+    <div id="appBar">
+        <img src="Artboard 3.png" alt="Header Photo" style="width: 100%; height: 100%;" />
+    </div>
+
+    <div id="content">
+    </div>
+        <div class="table">
+            <h1>ROOM LIST</h1>
+            <table id="roomList">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Room Name</th>
+                        <th>Room Status</th>
+                        <th>Room Type</th>
+                        <th>Capacity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZW4f9CL-s71soVD43dUNwiErznHpnGb4",
+            authDomain: "hkkn-st-finals.firebaseapp.com",
+            projectId: "hkkn-st-finals",
+            storageBucket: "hkkn-st-finals.appspot.com",
+            messagingSenderId: "316271335533",
+            appId: "1:316271335533:web:c461bfe0b3d98033bd8764",
+            measurementId: "G-EJ59SM1W4B"
+          };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    
+        const db = firebase.database();
+        const roomsRef = db.ref("Rooms");
+    
+        $(document).ready(function () {
+            // Fetch data from the database
+            roomsRef.once("value")
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    console.log(data);
+    
+                    $.each(data, function (index, value) {
+                        $("#roomList tbody").append("<tr><td>" + index + "</td><td>" + value.roomName + "</td><td>" + value.roomStatus + "</td><td>" + value.roomType + "</td><td>" + value.roomCapacity + "</td><td class='btn-container'><button class='update-btn' onclick='editRow(this, \"" + index + "\", \"" + value.roomName + "\", \"" + value.roomStatus + "\", \"" + value.roomType + "\", \"" + value.roomCapacity + "\")'>Edit</button><button class='delete-btn' onclick='deleteRoom(\"" + index + "\")'>Delete</button></td></tr>");
+                    });
+                })
+                .catch((error) => {
+                    console.log("Error:", error);
+                });
+        });
+    
+        function editRow(button, roomId, roomName, roomStatus, roomType, roomCapacity) {
+            var row = button.parentNode.parentNode;
+            var cells = row.getElementsByTagName('td');
+    
+            // Replace the cells with input fields
+            cells[1].innerHTML = '<input type="text" id="editRoomName" value="' + roomName + '">';
+            cells[2].innerHTML = '<input type="text" id="editRoomStatus" value="' + roomStatus + '">';
+            cells[3].innerHTML = '<input type="text" id="editRoomType" value="' + roomType + '">';
+            cells[4].innerHTML = '<input type="text" id="editCapacity" value="' + roomCapacity + '">';
+            cells[5].innerHTML = '<button onclick="updateRow(\'' + roomId + '\')">Update</button>';
+        }
+    
+        function updateRow(roomId) {
+            // Get the edited values
+            var updatedRoomName = document.getElementById('editRoomName').value;
+            var updatedRoomStatus = document.getElementById('editRoomStatus').value;
+            var updatedRoomType = document.getElementById('editRoomType').value;
+            var updatedCapacity = document.getElementById('editCapacity').value;
+        
+            // Perform the update operation
+            roomsRef.child(roomId).update({
+                roomName: updatedRoomName,
+                roomStatus: updatedRoomStatus,
+                roomType: updatedRoomType,
+                roomCapacity: updatedCapacity
+            })
+            .then(() => {
+                console.log("Room updated successfully");
+                // Reload the page or fetch data again after the update
+                location.reload();
+            })
+            .catch((error) => {
+                console.error("Error updating room:", error);
+            });
+        }
+        
+        function deleteRoom(roomId) {
+            const confirmation = confirm("Are you sure you want to delete this room?");
+            if (confirmation) {
+                roomsRef.child(roomId).remove()
+                    .then(() => {
+                        console.log("Room deleted successfully");
+                        // Reload the page or fetch data again after the deletion
+                        location.reload();
+                    })
+                    .catch((error) => {
+                        console.error("Error deleting room:", error);
+                    });
+            }
+        }
+        
+    </script>
+        
+    </body>
+</html>

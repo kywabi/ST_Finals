@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CICT Room Checker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #imgBackground {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.5);
+        }
+
+        #imgLogo
+        {
+            position:absolute;
+            left: 40%;
+            top: 25%;
+            width: 20%;
+        }
+
+        #landingPage {
+            align-items: center;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+        }
+
+        #startButton {
+            position: absolute;
+            color: #215049;
+            background-color: #fff;
+            padding: 12px 5%;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            margin-top: 390px;
+        }
+
+        #startButton:hover {
+            background-color: #FEA001;
+            color: #215049;
+            border-color: #FEA001;
+        }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <img src="New Background.png" id="imgBackground" alt="Background Image">
+    <img src="logo.png" id="imgLogo" alt="logo image">
+    
+    <div id="landingPage">
+        <button id="startButton" onclick="redirectToLogin()">Lets Get Started!</button>
+    </div>
+    <script>
+        function redirectToLogin() {
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>
